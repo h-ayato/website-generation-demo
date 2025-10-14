@@ -1,35 +1,64 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { saveShopInfo } from './repository'
+import { ShopInfoData } from './types'
 
-export async function createShopInfo(formData: FormData){
-    const rawFormData = {
-        shopName: formData.get('shopName'),
-        industry: formData.get('industry'),
-        description: formData.get('description'),
-        established: formData.get('established'),
-        prefecture: formData.get('prefecture'),
-        city: formData.get('city'),
-        streetAddress: formData.get('streetAddress'),
-        phone: formData.get('phone'),
-        email: formData.get('email'),
-        openingTime: formData.get('openingTime'),
-        closingTime: formData.get('closingTime'),
-        regularHoliday: formData.get('regularHoliday'),
-        parking: formData.get('parking'),
-        websiteUrl: formData.get('websiteUrl'),
-        instagramUrl: formData.get('instagramUrl'),
-        xUrl: formData.get('xUrl'),
-        announcement: formData.get('announcement')
+/**
+ * フォームデータから店舗情報を作成し、データベースに保存する
+ * @param formData フォームから送信されたデータ
+ */
+export async function createShopInfo(formData: FormData) {
+    // フォームデータの取得
+    const shopName = formData.get('shopName') as string
+    const industry = formData.get('industry') as string
+    const description = formData.get('description') as string
+    const establishedStr = formData.get('established') as string
+    const prefecture = formData.get('prefecture') as string
+    const city = formData.get('city') as string
+    const streetAddress = formData.get('streetAddress') as string
+    const phone = formData.get('phone') as string | null
+    const email = formData.get('email') as string | null
+    const openingTime = formData.get('openingTime') as string
+    const closingTime = formData.get('closingTime') as string
+    const regularHoliday = formData.get('regularHoliday') as string | null
+    const parking = formData.get('parking') as string | null
+    const websiteUrl = formData.get('websiteUrl') as string | null
+    const instagramUrl = formData.get('instagramUrl') as string | null
+    const xUrl = formData.get('xUrl') as string | null
+    const announcement = formData.get('announcement') as string | null
+
+    // 設立年の変換（空文字の場合はnull）
+    const established = establishedStr && establishedStr !== ''
+        ? parseInt(establishedStr, 10)
+        : null
+
+    // 店舗情報データオブジェクトの作成
+    const shopInfoData: ShopInfoData = {
+        shopName,
+        industry,
+        description,
+        established,
+        prefecture,
+        city,
+        streetAddress,
+        phone: phone || null,
+        email: email || null,
+        openingTime,
+        closingTime,
+        regularHoliday: regularHoliday || null,
+        parking: parking || null,
+        websiteUrl: websiteUrl || null,
+        instagramUrl: instagramUrl || null,
+        xUrl: xUrl || null,
+        announcement: announcement || null,
     }
 
-    console.log(rawFormData)
-
-    // TODO: データベースに保存する処理を追加
+    // データベースに保存
+    const store = await saveShopInfo(shopInfoData)
+    console.log('店舗情報を保存しました:', store.id)
 
     // 業種に応じて適切なページにリダイレクト
-    const industry = formData.get('industry') as string
-
     switch(industry) {
         case 'restaurant':
             redirect('/form/restaurant')

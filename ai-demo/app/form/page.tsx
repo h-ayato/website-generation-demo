@@ -3,13 +3,50 @@
 import { createShopInfo } from '@/app/form/form';
 import styles from './page.module.css';
 import { prefectures } from './prefectures';
+import { useState, useEffect } from 'react';
 
 export default function Page() {
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [maxYear, setMaxYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setMaxYear(new Date().getFullYear());
+  }, []);
+
+  const handleSubmit = async (formData: FormData) => {
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await createShopInfo(formData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存に失敗しました');
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
+        <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+          <a
+            href="/data"
+            style={{
+              color: '#3b82f6',
+              textDecoration: 'underline',
+              fontSize: '0.95rem'
+            }}
+          >
+            📊 保存されたデータを見る
+          </a>
+        </div>
         <h1 className={styles.title}>店舗情報登録</h1>
-        <form action={createShopInfo} className={styles.form}>
+        {error && (
+          <div className={styles.error}>
+            {error}
+          </div>
+        )}
+        <form action={handleSubmit} className={styles.form}>
 
         <div className={styles.formGroup}>
           <label htmlFor="shopName" className={styles.label}>店舗名</label>
@@ -60,7 +97,7 @@ export default function Page() {
             name="established"
             className={styles.input}
             min="1900"
-            max={new Date().getFullYear()}
+            max={maxYear}
           />
         </div>
 
@@ -215,8 +252,8 @@ export default function Page() {
           />
         </div>
 
-        <button type="submit" className={styles.submitButton}>
-          次へ（業種別情報入力）
+        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          {isSubmitting ? '保存中...' : '次へ（業種別情報入力）'}
         </button>
       </form>
       </div>
