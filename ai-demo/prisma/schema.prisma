@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model testData{
+  id      Int            @id @default(autoincrement())
+  name    String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Store{
+  id             Int        @id @default(autoincrement())
+  shopName       String     // 店舗名
+  industry       String     // 業種 (restaurant, retail, service, beauty, healthcare, other)
+  description    String     // 概要説明
+  established    Int?       // 設立年
+  prefecture     String     // 都道府県
+  city           String     // 市区町村
+  streetAddress  String     // 番地・建物名
+  phone          String?    // 電話番号
+  email          String?    // メールアドレス
+  openingTime    String     // 開店時刻
+  closingTime    String     // 閉店時刻
+  regularHoliday String?    // 定休日
+  parking        String?    // 駐車場 (available, unavailable, nearby)
+  websiteUrl     String?    // 公式サイトURL
+  instagramUrl   String?    // Instagram URL
+  xUrl           String?    // X (旧Twitter) URL
+  announcement   String?    // 店舗からのお知らせ
+  website        Website[]  // 関連するWebサイト
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+// メニュー
+model Menu{
+  id          Int        @id @default(autoincrement())
+  name        String     // 商品名
+  description String?    // 商品説明
+  price       Int        // 価格
+  imageUrl    String?    // 商品画像URL
+  category    String?    // カテゴリー
+  isAvailable Boolean    @default(true) // 販売可能かどうか
+  allergyInfo String?    // アレルギー情報
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// webサイト
+model Website{
+  id          Int      @id @default(autoincrement())
+  title       String   // サイトタイトル
+  description String?  // サイト説明
+  storeId     Int      // 関連する店舗ID
+  store       Store    @relation(fields: [storeId], references: [id])
+  logoUrl     String?  // ロゴ画像URL
+  headerImageUrl String? // ヘッダー画像URL
+  themeColor  String?  // テーマカラー
+  fontFamily  String?  // フォントファミリー
+  layout      String?  // レイアウトタイプ
+  menuIds     String?  // メニューIDのリスト（JSON形式）
+  customCss   String?  // カスタムCSS
+  isPublished Boolean  @default(false) // 公開状態
+  domain      String?  // カスタムドメイン
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
