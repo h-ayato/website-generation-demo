@@ -1,12 +1,4 @@
 -- CreateTable
-CREATE TABLE "testData" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "Store" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "shopName" TEXT NOT NULL,
@@ -32,6 +24,20 @@ CREATE TABLE "Store" (
 
 -- CreateTable
 CREATE TABLE "Menu" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "price" INTEGER NOT NULL,
+    "imageUrl" TEXT,
+    "category" TEXT,
+    "isAvailable" BOOLEAN NOT NULL DEFAULT true,
+    "allergyInfo" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- RetailIndustryCreateTable
+CREATE TABLE "RetailIndustryMenu" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "description" TEXT,
